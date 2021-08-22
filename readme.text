@@ -1,0 +1,5 @@
+-changed all hardcoded vars to global ones
+-custom styles addition accroding to generated html
+-layout modified due to bg image
+-About me section including .md file
+-deployed to gatsby .

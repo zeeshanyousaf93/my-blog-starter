@@ -1,7 +1,6 @@
 import * as React from "react"
 import { Link, graphql } from "gatsby"
 
-import Bio from "../components/bio"
 import Layout from "../components/layout"
 import Seo from "../components/seo"
 
@@ -10,6 +9,9 @@ const BlogPostTemplate = ({ data, location }) => {
   const siteTitle = data.site.siteMetadata?.title || `Title`
   const { previous, next } = data
 
+  console.log(data.site.siteMetadata.image)
+  const style = (post.frontmatter.image) ? {backgroundImage: `url(${post.frontmatter.image})`} : {}
+
   return (
     <Layout location={location} title={siteTitle}>
       <Seo
@@ -17,22 +19,25 @@ const BlogPostTemplate = ({ data, location }) => {
         description={post.frontmatter.description || post.excerpt}
       />
       <article
-        className="blog-post"
+        className="story-body"
         itemScope
         itemType="http://schema.org/Article"
       >
-        <header>
+        <header className={`story-header ${(post.frontmatter.image) && `header-img`}`} style={style}>
           <h1 itemProp="headline">{post.frontmatter.title}</h1>
-          <p>{post.frontmatter.date}</p>
+          <div class="published"><time>{post.frontmatter.date}</time></div>
+          {
+            post.frontmatter.updated &&
+              <div class="published"><time>Last Updated: {post.frontmatter.updated}</time></div>
+          }
         </header>
+        <div className='outer'>
         <section
           dangerouslySetInnerHTML={{ __html: post.html }}
           itemProp="articleBody"
+          className='inner'
         />
-        <hr />
-        <footer>
-          <Bio />
-        </footer>
+        </div>
       </article>
       <nav className="blog-post-nav">
         <ul
@@ -83,8 +88,10 @@ export const pageQuery = graphql`
       html
       frontmatter {
         title
-        date(formatString: "MMMM DD, YYYY")
+        date(formatString: "MMM DD, YYYY")
+        updated(formatString: "MMM DD, YYYY")
         description
+        image
       }
     }
     previous: markdownRemark(id: { eq: $previousPostId }) {
